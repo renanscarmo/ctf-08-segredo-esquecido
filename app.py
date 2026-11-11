@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return {"mensagem": "Loja online", "chave_termina_em": CHAVE_API[-4:]}
+    return {"mensagem": "Loja online", "chave_termina_em": CHAVE_API[-9:]}
 
 
 if __name__ == "__main__":

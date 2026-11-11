@@ -1,1 +1,3 @@
-CHAVE_API = "FLAG{chave_esquecida_no_historico}"
+import os
+
+CHAVE_API = os.environ.get("fake_test_key","")
