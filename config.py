@@ -1,0 +1,1 @@
+CHAVE_API = "FLAG{chave_esquecida_no_historico}"
