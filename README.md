@@ -1,44 +1,30 @@
-# Template de Segurança Python
+# CTF 08: Segredo esquecido no repositório
 
-Estrutura base para começar projetos Python com segurança desde o início.
+Projeto criado a partir do [template-seguranca](https://github.com/renanscarmo/template-seguranca)
+para praticar segurança em Python.
 
-## O que já vem pronto
+## Objetivo
 
-- Pipeline no GitHub Actions
+Mostrar que uma chave apagada do código continua no histórico do Git e usar um scanner de segredos para achá-la.
+
+## Como foi
+
+1. **Antes:** a chave da API foi escrita no `config.py` e enviada ao GitHub. No commit seguinte ela foi trocada por uma leitura de variável de ambiente, e o programador achou que isso resolvia.
+2. **Detecção:** abrindo o histórico de commits, a chave antiga aparece no commit que a escreveu e também no que a removeu. O Bandit e o pip-audit ficaram verdes. O Gitleaks, rodando manualmente e com uma regra própria, varreu todo o histórico e achou o segredo.
+3. **Depois:** a chave passou a vir de uma variável de ambiente. Mas a correção completa é **revogar a chave antiga e gerar uma nova**, porque a que está no histórico continua válida para quem a copiou.
+
+## O que aprendi
+
+- Apagar um segredo do código não o apaga do histórico do Git
+- Uma chave que foi para um repositório deve ser considerada exposta: a atitude certa é revogar e gerar outra
+- A chave fica numa variável de ambiente, nunca escrita no código
+- O Gitleaks procura segredos em todos os commits, o que o Bandit não faz
+- No push o scanner olha só os commits novos, e para varrer o passado é preciso rodá-lo manualmente
+- Regras prontas reconhecem formatos conhecidos de chaves, e dá para criar uma regra própria
+
+## Ferramentas
+
 - SAST com Bandit
 - SCA com pip-audit
-- .gitignore protegendo senhas e arquivos locais
-- DAST com OWASP ZAP (manual)
-
-## Como usar
-
-1. Clique em **Use this template**
-2. Crie seu novo repositório
-3. Troque o exemplo do `app.py` pelo código do seu projeto
-4. Adicione as bibliotecas que você usar no `requirements.txt`
-5. Atualize este README com o nome e a descrição do seu projeto
-6. Faça um commit e veja a aba **Actions**
-
-## DAST com OWASP ZAP (manual)
-
-O DAST testa o **site rodando**. O Bandit confere o código do script e o pip-audit confere as bibliotecas, e o ZAP ataca as páginas do site para achar falhas como XSS.
-
-### Quando usar
-
-- Use quando o projeto tem um **site ou API** que abre uma porta (por exemplo, `python api.py` na porta 8000)
-- Não use em scripts (como um que lê uma planilha) nem em chatbots de terminal: eles não abrem porta nenhuma, então o ZAP não tem o que atacar e o job falha
-
-### Como rodar
-
-1. Abra a aba **Actions** do repositório
-2. Clique em **DAST ZAP (manual)** e depois em **Run workflow**
-3. Em **Comando que liga o app**, escreva o comando do seu projeto (padrão: `python app.py`)
-4. Em **Porta do app**, escreva a porta em que ele abre (padrão: `5000`)
-5. Clique em **Run workflow** e espere uns 2 a 3 minutos
-
-### Se ficar vermelho
-
-Abra o job no Actions e leia o último passo:
-
-- `ZAP achou XSS refletido ... ou cookie sem HttpOnly`: o ZAP achou uma falha. Corrija o código
-- `Relatorio JSON nao encontrado`: o ZAP não chegou a rodar, normalmente porque o app não abriu. Confira o comando e a porta
+- Scanner de segredos com Gitleaks
+- GitHub Actions
