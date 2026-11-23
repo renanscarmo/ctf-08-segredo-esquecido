@@ -1,0 +1,7 @@
+[extend]
+useDefault = true
+
+[[rules]]
+id = "flag-ctf"
+description = "Flag de CTF esquecida no código"
+regex = '''FLAG\{[^}]+\}'''
